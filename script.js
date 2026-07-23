@@ -82,33 +82,29 @@ document.getElementById("loadGoogleData")
     .addEventListener("click", loadGoogleData);
 
 async function loadGoogleData() {
-
     const status = document.getElementById("syncStatus");
-
     status.innerHTML = "Loading...";
 
     try {
-
         const response = await fetch(API_URL);
 
         if (!response.ok) {
-            throw new Error("API request failed");
+            throw new Error(`HTTP ${response.status}`);
         }
 
         const data = await response.json();
 
-        console.log(data);
+        console.log("Data received:", data);
 
-        processExcelData(data);
+        // TEMP: show data on screen
+        document.getElementById("output").innerHTML =
+            `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 
         status.innerHTML = "✅ Data Loaded";
 
     } catch (error) {
-
-        console.error("Error:", error);
-
-        status.innerHTML = "❌ Failed";
-
+        console.error(error);
+        status.innerHTML = "❌ Failed: " + error.message;
     }
 }
 
