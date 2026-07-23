@@ -76,7 +76,7 @@ excelFile.addEventListener("change", function(event){
 });
 
 
-const API_URL = "";
+const API_URL = "https://script.google.com/macros/s/AKfycbw3DT3vhnQqBU2uJzGXLUySk_6BHlfUsvst9aVp3dA3SZ7eSRYxZB93u5mOvRwb98Ld/exec";
 
 document.getElementById("loadGoogleData").addEventListener("click", loadGoogleData);
 
