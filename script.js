@@ -78,23 +78,37 @@ excelFile.addEventListener("change", function(event){
 
 const API_URL = "https://script.google.com/macros/s/AKfycbw3DT3vhnQqBU2uJzGXLUySk_6BHlfUsvst9aVp3dA3SZ7eSRYxZB93u5mOvRwb98Ld/exec";
 
-async function loadData() {
+document.getElementById("loadGoogleData")
+    .addEventListener("click", loadGoogleData);
+
+async function loadGoogleData() {
+
+    const status = document.getElementById("syncStatus");
+
+    status.innerHTML = "Loading...";
+
     try {
+
         const response = await fetch(API_URL);
 
         if (!response.ok) {
-            throw new Error("API Error");
+            throw new Error("API request failed");
         }
 
         const data = await response.json();
 
         console.log(data);
 
-        // Display your data here
+        processExcelData(data);
+
+        status.innerHTML = "✅ Data Loaded";
 
     } catch (error) {
-        console.error(error);
-        alert("Failed to load data");
+
+        console.error("Error:", error);
+
+        status.innerHTML = "❌ Failed";
+
     }
 }
 
