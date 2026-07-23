@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Cash Flow Dashboard</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Chart JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- XLSX Reader -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ================= HEADER ================= -->
+
+    <header>
+
+        <div>
+
+            <h1>
+                <i class="fa-solid fa-wallet"></i>
+                Cash Flow Dashboard
+            </h1>
+
+            <p>
+                Personal Finance Analytics
+            </p>
+
+        </div>
+
+        <button id="themeBtn">
+
+            <i class="fa-solid fa-moon"></i>
+
+        </button>
+
+    </header>
+
+
+    <!-- ================= FILE UPLOAD ================= -->
+
+    <!-- ================= FILE UPLOAD ================= -->
+
+<section class="upload-section">
+
+    <!-- Excel Upload -->
+    <div class="upload-box">
+
+        <label>
+            <i class="fa-solid fa-file-excel"></i>
+            Upload Excel File
+        </label>
+
+        <input
+            type="file"
+            id="excelFile"
+            accept=".xlsx,.xls,.csv">
+
+    </div>
+
+    <br>
+
+    <!-- Google Sheet Sync -->
+    <div class="upload-box">
+
+        <label>
+            <i class="fa-brands fa-google"></i>
+            Google Sheet
+        </label>
+
+        <button id="loadGoogleData" class="sync-btn">
+            <i class="fa-solid fa-cloud-arrow-down"></i>
+            Load Latest Data
+        </button>
+
+        <span id="syncStatus"></span>
+
+    </div>
+
+</section>
+
+
+    <!-- ================= FILTERS ================= -->
+
+    <section class="filters">
+
+        <select id="monthFilter">
+
+            <option value="">All Months</option>
+
+        </select>
+
+        <select id="entryFilter">
+
+            <option value="">Debit + Credit</option>
+            <option>Debit</option>
+            <option>Credit</option>
+
+        </select>
+
+        <select id="categoryFilter">
+
+            <option value="">All Categories</option>
+
+        </select>
+
+        <select id="mainCategoryFilter">
+
+            <option value="">Main Category</option>
+
+        </select>
+
+        <select id="costCenterFilter">
+
+            <option value="">Cost Center</option>
+
+        </select>
+
+        <select id="paymentFilter">
+
+            <option value="">Payment Mode</option>
+
+        </select>
+
+    </section>
+
+
+    <!-- ================= KPI CARDS ================= -->
+
+    <section class="kpi-grid">
+
+        <div class="card income">
+
+            <h4>Total Income</h4>
+
+            <h2 id="totalIncome">₹0</h2>
+
+        </div>
+
+        <div class="card expense">
+
+            <h4>Total Expense</h4>
+
+            <h2 id="totalExpense">₹0</h2>
+
+        </div>
+
+        <div class="card balance">
+
+            <h4>Net Cash Flow</h4>
+
+            <h2 id="netCash">₹0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <h4>Need</h4>
+
+            <h2 id="needExpense">₹0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <h4>Want</h4>
+
+            <h2 id="wantExpense">₹0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <h4>Savings Rate</h4>
+
+            <h2 id="savingRate">0%</h2>
+
+        </div>
+
+        <div class="card">
+
+            <h4>Total Transactions</h4>
+
+            <h2 id="transactionCount">0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <h4>Average Expense</h4>
+
+            <h2 id="avgExpense">₹0</h2>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= INSIGHT KPI CARDS ================= -->
+
+    <section class="kpi-grid insight-grid">
+
+        <div class="card insight">
+
+            <i class="fa-solid fa-crown"></i>
+
+            <h4>Top Category</h4>
+
+            <h2 id="topCategory">—</h2>
+
+            <p class="card-sub" id="topCategoryAmount"></p>
+
+        </div>
+
+        <div class="card insight">
+
+            <i class="fa-solid fa-arrow-trend-up"></i>
+
+            <h4>Biggest Expense</h4>
+
+            <h2 id="biggestExpense">₹0</h2>
+
+            <p class="card-sub" id="biggestExpenseName"></p>
+
+        </div>
+
+        <div class="card insight">
+
+            <i class="fa-solid fa-credit-card"></i>
+
+            <h4>Top Payment Mode</h4>
+
+            <h2 id="topPaymentMode">—</h2>
+
+            <p class="card-sub" id="topPaymentModeAmount"></p>
+
+        </div>
+
+        <div class="card insight">
+
+            <i class="fa-solid fa-calendar-days"></i>
+
+            <h4>Highest Spending Month</h4>
+
+            <h2 id="highestMonth">—</h2>
+
+            <p class="card-sub" id="highestMonthAmount"></p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CHART ROW 1 ================= -->
+
+    <section class="chart-grid">
+
+        <div class="chart-card">
+
+            <h3>Income vs Expense</h3>
+
+            <canvas id="incomeExpenseChart"></canvas>
+
+        </div>
+
+        <div class="chart-card">
+
+            <h3>Expense by Main Category</h3>
+
+            <canvas id="mainCategoryChart"></canvas>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CHART ROW 2 ================= -->
+
+    <section class="chart-grid">
+
+        <div class="chart-card">
+
+            <h3>Expense by Category</h3>
+
+            <canvas id="categoryChart"></canvas>
+
+        </div>
+
+        <div class="chart-card">
+
+            <h3>Need vs Want</h3>
+
+            <canvas id="needWantChart"></canvas>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CHART ROW 3 ================= -->
+
+    <section class="chart-grid">
+
+        <div class="chart-card">
+
+            <h3>Payment Mode</h3>
+
+            <canvas id="paymentChart"></canvas>
+
+        </div>
+
+        <div class="chart-card">
+
+            <h3>Monthly Cash Flow</h3>
+
+            <canvas id="monthlyChart"></canvas>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CHART ROW 4 ================= -->
+
+    <section class="chart-grid">
+
+        <div class="chart-card full-width">
+
+            <h3>Running Cash Flow</h3>
+
+            <canvas id="runningChart"></canvas>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CHART ROW 5 ================= -->
+
+    <section class="chart-grid">
+
+        <div class="chart-card">
+
+            <h3>Cost Center Analysis</h3>
+
+            <canvas id="costCenterChart"></canvas>
+
+        </div>
+
+        <div class="chart-card">
+
+            <h3>Sub-Category Breakdown</h3>
+
+            <canvas id="subCategoryChart"></canvas>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= TOP EXPENSES ================= -->
+
+    <section class="table-card">
+
+        <div class="table-header">
+
+            <h3>Top 10 Expenses</h3>
+
+        </div>
+
+        <table id="expenseTable">
+
+            <thead>
+
+            <tr>
+
+                <th>Date</th>
+
+                <th>Particular</th>
+
+                <th>Category</th>
+
+                <th>Payment</th>
+
+                <th>Amount</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        Cash Flow Dashboard |
+        Responsive HTML Dashboard |
+        Powered by JavaScript
+
+    </footer>
+
+</div>
+
+<!-- JavaScript -->
+<script src="script.js"></script>
+
+</body>
+</html>
